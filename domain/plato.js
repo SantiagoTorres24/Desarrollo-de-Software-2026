@@ -1,27 +1,48 @@
-let menu = {
-    platosDisponibles: []
-}
+const { CategoriaEnum } = require('./enums');
 
 class Plato {
-    constructor(nombre, categoria, precio, descripcion, disponibilidad) {
-        let valores = [nombre, categoria, precio, descripcion, disponibilidad]
-        if (valores.some(e => e === undefined)) {
-            throw new Error("No hay un/unos estado/s definido/s");
+    constructor(nombre, categoria, precio, descripcion, disponible = true) {
+        if ([nombre, categoria, precio, descripcion].some(e => e === undefined)) {
+            throw new Error('Faltan datos del plato');
         }
-        
+
+        if (!Object.values(CategoriaEnum).includes(categoria)) {
+            throw new Error('Categoría de plato inválida');
+        }
+
+        if (typeof precio !== 'number' || precio < 0) {
+            throw new Error('Precio inválido');
+        }
+
         this.nombre = nombre;
         this.categoria = categoria;
         this.precio = precio;
         this.descripcion = descripcion;
-        this.disponibilidad = disponibilidad;
+        this.disponible = Boolean(disponible);
+    }
+
+    marcarNoDisponible() {
+        this.disponible = false;
     }
 
     cambiarDisponibilidad(nuevaDisponibilidad) {
-        if (nuevaDisponibilidad !== "Disponible" && nuevaDisponibilidad !== "No Disponible") {
-            throw new Error("La disponibilidad debe ser 'Disponible' o 'No Disponible'");
+        if (typeof nuevaDisponibilidad === 'boolean') {
+            this.disponible = nuevaDisponibilidad;
+            return;
         }
-        this.disponibilidad = nuevaDisponibilidad;
+
+        if (nuevaDisponibilidad === 'Disponible') {
+            this.disponible = true;
+            return;
+        }
+
+        if (nuevaDisponibilidad === 'No Disponible') {
+            this.disponible = false;
+            return;
+        }
+
+        throw new Error("La disponibilidad debe ser 'Disponible', 'No Disponible' o un booleano");
     }
 }
 
-module.exports = { menu, Plato };
+module.exports = { Plato };
