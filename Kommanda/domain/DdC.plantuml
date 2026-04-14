@@ -1,0 +1,86 @@
+@startuml kommanda
+
+class Plato {
+    - nombre: String
+    - categoria: CategoriaEnum 
+    - precio: Double
+    - descripcion: String
+    - disponible: Boolean
+    + marcarNoDisponible(): void
+}
+
+Plato --> CategoriaEnum
+
+class Menu {
+    - platos: List<Plato>
+    + agregarPlato(plato: Plato): void
+    + eliminarPlato(plato: Plato): void
+    + marcarPlatoNoDisponible(plato: Plato): void
+}
+
+Menu --> Plato
+
+class Comanda {
+    - estado: EstadoComandaEnum // Si el pedido ya estaba avanzado, vuelve al estado anterior que corresponda (ej, si ya estaba marcado como “postre entregado”, pero alguien pidió otro principal, vuelve a “entradas listas”)
+    - platos: List<Plato> // paso la lista en el constructor
+    - bebidasListas: List<Bebida> 
+    - mesa: Mesa
+    + agregarPlato(plato: Plato): void
+    + eliminarPlato(plato: Plato): void
+    + cambiarEstado(estado: EstadoComandaEnum): void
+    + verEstado(): EstadoComandaEnum
+    + verBebidasListas(): List<Bebida>
+    + verBebidasPendientes(): List<Bebida>
+    + marcarBebidasListas(List<Bebida> bebidas): void
+    + verPlatosPendientes(): List<Plato>
+    + marcarPlatosListos(List<Plato> platos): void
+    + verTotal(): Double
+}
+
+Comanda --> Plato
+Comanda --> Bebida
+Comanda --> Mesa
+Comanda --> EstadoComandaEnum
+
+class Mesa {
+    - numero: int
+    - capacidad: int
+}
+
+class Bebida {
+    - nombre: String
+    - precio: Double
+    - descripcion: String
+    - lista: Boolean
+    + bebidaLista(): void
+}
+
+class Usuario {
+    - nombre: String
+    - rol: RolEnum
+}
+
+Usuario --> RolEnum
+
+Enum CategoriaEnum {
+    ENTRADA: 'Entrada',
+    PRINCIPAL: 'Principal',
+    POSTRE: 'Postre',
+    BEBIDA: 'Bebida'
+}
+
+Enum RolEnum {
+    ADMIN: 'admin',
+    ENCARGADO: 'encargado',
+    MOZO: 'mozo'
+}
+
+Enum EstadoComandaEnum {
+    INGRESADO: "ingresado",
+    ENTRADAS_LISTAS: "entradas_listas",
+    PRINCIPALES_LISTOS: "principales_listos",
+    POSTRES_LISTOS: "postres_listos",
+    ENTREGADO: "entregado",
+    PAGADO: "pagado"
+}
+@enduml
